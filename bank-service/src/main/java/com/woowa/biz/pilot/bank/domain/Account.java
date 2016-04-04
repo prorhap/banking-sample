@@ -4,13 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
-@Table(name = "Account")
 public class Account {
 
     @Id
@@ -27,6 +28,10 @@ public class Account {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
+
+    @ManyToOne
+    @JoinColumn(name="USER_ID")
+    private User user;
 
     public Account() {
     }
@@ -76,6 +81,15 @@ public class Account {
 
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        user.getAccounts().add(this);
+        this.user = user;
     }
 
     @Override
