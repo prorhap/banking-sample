@@ -1,12 +1,13 @@
 package com.woowa.biz.pilot.bank.domain;
 
+import com.woowa.biz.pilot.bank.service.TransferResult;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
@@ -28,6 +29,8 @@ public class Account {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
+
+    private Integer balance;
 
     @ManyToOne
     @JoinColumn(name="USER_ID")
@@ -83,6 +86,14 @@ public class Account {
         this.updatedDate = updatedDate;
     }
 
+    public Integer getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Integer balance) {
+        this.balance = balance;
+    }
+
     public User getUser() {
         return user;
     }
@@ -90,6 +101,18 @@ public class Account {
     public void setUser(User user) {
         user.getAccounts().add(this);
         this.user = user;
+    }
+
+    public TransferResult transfer(Account targetAccount, int amount) {
+
+        if (amount > balance) {
+            return TransferResult.NOT_ENOUGH_BALANCE;
+        }
+
+        balance = balance - amount;
+        targetAccount.setBalance( targetAccount.getBalance()+amount );
+
+        return TransferResult.SUCCESS;
     }
 
     @Override

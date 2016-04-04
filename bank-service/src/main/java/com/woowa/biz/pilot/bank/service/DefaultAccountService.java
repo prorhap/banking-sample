@@ -3,6 +3,7 @@ package com.woowa.biz.pilot.bank.service;
 import com.woowa.biz.pilot.bank.domain.Account;
 import com.woowa.biz.pilot.bank.domain.User;
 import com.woowa.biz.pilot.bank.dto.AccountAddRequest;
+import com.woowa.biz.pilot.bank.dto.TransferRequest;
 import com.woowa.biz.pilot.bank.repository.AccountRepository;
 import com.woowa.biz.pilot.bank.repository.UserRepository;
 import org.slf4j.Logger;
@@ -43,7 +44,15 @@ public class DefaultAccountService implements AccountService {
         return AccountCreationResult.OK;
     }
 
+    public TransferResult transfer(TransferRequest transferRequest) {
+
+        Account sourceAccountNumber = accountRepository.findByAccountNumber(transferRequest.getSourceAccountNumber());
+        Account targetAccountNumber = accountRepository.findByAccountNumber(transferRequest.getTargetAccountNumber());
+
+        return sourceAccountNumber.transfer(targetAccountNumber, transferRequest.getAmount());
+    }
+
     private boolean isTheAccountNumberExists(AccountAddRequest accountAddRequest) {
-        return accountRepository.findByAccountNumber(accountAddRequest.getAccountNumber()).size() > 0;
+        return accountRepository.findByAccountNumberList(accountAddRequest.getAccountNumber()).size() > 0;
     }
 }
